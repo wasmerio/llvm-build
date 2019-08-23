@@ -22,11 +22,11 @@ jobs:
       displayName: Configure LLVM
       inputs:
         workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm'
-        cmakeArgs: '${{ parameters.cmakeArgs }} -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
+        cmakeArgs: '${{ parameters.cmakeArgs }} -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
 
     - task: VSBuild@1
       displayName: Build LLVM
       inputs:
-        solution: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm/LLVM.sln'
+        solution: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm/INSTALL.vcxproj'
         platform: ${{ parameters.vsPlatform }}
         configuration: ${{ parameters.buildConfiguration }}
