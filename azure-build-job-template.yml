@@ -1,10 +1,8 @@
 parameters:
-  buildConfiguration: Release
   name: ''
-  vmImage: 'VS2017-Win2016'
-  cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
-  vsPlatform: x64
-
+  vmImage: 'macOS-10.14'
+  cmakeConfigArgs: '-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release'
+  cmakeBuildArgs: ''
 
 jobs:
   - job: ${{ parameters.name }}
@@ -19,14 +17,13 @@ jobs:
       displayName: Configure LLVM
       inputs:
         workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm'
-        cmakeArgs: '${{ parameters.cmakeArgs }} -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_INCLUDE_DOCS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_INCLUDE_GO_TESTS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_UTILS=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
+        cmakeArgs: '${{ parameters.cmakeConfigArgs }} -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_INCLUDE_DOCS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_INCLUDE_GO_TESTS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_UTILS=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
 
-    - task: VSBuild@1
+    - task: CMake@1
       displayName: Build LLVM
       inputs:
-        solution: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm/INSTALL.vcxproj'
-        platform: ${{ parameters.vsPlatform }}
-        configuration: ${{ parameters.buildConfiguration }}
+        workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm'
+        cmakeArgs: '--build . --target install ${{ parameters.cmakeBuildArgs }}'
 
     - task: ArchiveFiles@2
       inputs:

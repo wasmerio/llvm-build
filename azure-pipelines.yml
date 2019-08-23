@@ -4,30 +4,40 @@ stages:
   - stage:
     displayName: Build
     jobs:
-      - template: azure-windows-build-job-template.yml
+      - template: azure-build-job-template.yml
+        parameters:
+          name: MacOSX14_Release
+          vmImage: 'macOS-10.14'
+          cmakeConfigArgs: '-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release'
+      - template: azure-build-job-template.yml
+        parameters:
+          name: MacOSX14_Debug
+          vmImage: 'macOS-10.14'
+          cmakeConfigArgs: '-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug'
+      - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2017_Release
-          buildConfiguration: Release
           vmImage: 'VS2017-Win2016'
-          cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
-      - template: azure-windows-build-job-template.yml
+          cmakeConfigArgs: '-G "Visual Studio 15 2017 Win64"'
+          cmakeBuildArgs: '--config Release'
+      - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2017_Debug
-          buildConfiguration: Debug
           vmImage: 'VS2017-Win2016'
-          cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
-      - template: azure-windows-build-job-template.yml
+          cmakeConfigArgs: '-G "Visual Studio 15 2017 Win64"'
+          cmakeBuildArgs: '--config Debug'
+      - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2019_Release
-          buildConfiguration: Release
           vmImage: 'windows-2019'
-          cmakeArgs: '-G "Visual Studio 16 2019" -A x64'
-      - template: azure-windows-build-job-template.yml
+          cmakeConfigArgs: '-G "Visual Studio 16 2019" -A x64'
+          cmakeBuildArgs: '--config Release'
+      - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2019_Debug
-          buildConfiguration: Debug
           vmImage: 'windows-2019'
-          cmakeArgs: '-G "Visual Studio 16 2019" -A x64'
+          cmakeConfigArgs: '-G "Visual Studio 16 2019" -A x64'
+          cmakeBuildArgs: '--config Debug'
 
   - stage:
     displayName: Package
@@ -50,4 +60,6 @@ stages:
               $(Pipeline.Workspace)/Win64_VS2017_Debug/Win64_VS2017_Debug.zip
               $(Pipeline.Workspace)/Win64_VS2019_Release/Win64_VS2019_Release.zip
               $(Pipeline.Workspace)/Win64_VS2019_Debug/Win64_VS2019_Debug.zip
+              $(Pipeline.Workspace)/MacOSX14_Release/MacOSX14_Release.zip
+              $(Pipeline.Workspace)/MacOSX14_Debug/MacOSX14_Debug.zip
             assetUploadMode: replace
