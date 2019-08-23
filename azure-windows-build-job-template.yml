@@ -1,0 +1,29 @@
+parameters:
+  buildConfiguration: Release
+  name: ''
+  vmImage: 'VS2017-Win2016'
+  cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
+  vsPlatform: x64
+
+
+jobs:
+  - job: ${{ parameters.name }}
+
+    pool:
+      vmImage: ${{ parameters.vmImage }}
+
+    timeoutInMinutes: 120
+
+    steps:
+    - task: CMake@1
+      displayName: Configure LLVM
+      inputs:
+        workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm'
+        cmakeArgs: '${{ parameters.cmakeArgs }} -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
+
+    - task: VSBuild@1
+      displayName: Build LLVM
+      inputs:
+        solution: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm/build/LLVM.sln'
+        platform: ${{ parameters.vsPlatform }}
+        configuration: ${{ parameters.buildConfiguration }}

@@ -1,0 +1,1 @@
+This repo is used to track the version of LLVM that WAVM is tested against, and to hold binary builds of it for the platforms that WAVM supports.
