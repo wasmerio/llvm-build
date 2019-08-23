@@ -31,7 +31,7 @@ stages:
     displayName: Package
     jobs:
       pool:
-        vmImage: ${{ parameters.vmImage }}
+        vmImage: windows-2019
       steps:
       # Download all the artifacts uploaded by the jobs in the Build stage.
       - download: current
