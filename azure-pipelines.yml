@@ -1,3 +1,5 @@
+pr: none
+
 stages:
   - stage:
     displayName: Build
