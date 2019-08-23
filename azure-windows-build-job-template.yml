@@ -8,12 +8,9 @@ parameters:
 
 jobs:
   - job: ${{ parameters.name }}
-
     pool:
       vmImage: ${{ parameters.vmImage }}
-
     timeoutInMinutes: 120
-
     steps:
     - checkout: self
       submodules: recursive
@@ -30,3 +27,6 @@ jobs:
         solution: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm/INSTALL.vcxproj'
         platform: ${{ parameters.vsPlatform }}
         configuration: ${{ parameters.buildConfiguration }}
+
+    - publish: $(Build.ArtifactStagingDirectory)/install/llvm
+      artifact: ${{ parameters.name }}
