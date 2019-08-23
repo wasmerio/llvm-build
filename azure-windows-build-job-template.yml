@@ -22,7 +22,7 @@ jobs:
       displayName: Configure LLVM
       inputs:
         workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm'
-        cmakeArgs: '${{ parameters.cmakeArgs }} -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
+        cmakeArgs: '${{ parameters.cmakeArgs }} -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_INCLUDE_DOCS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_INCLUDE_GO_TESTS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_UTILS=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
 
     - task: VSBuild@1
       displayName: Build LLVM
