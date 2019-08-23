@@ -46,8 +46,8 @@ stages:
             target: $(Build.SourceVersion)
             tagSource: auto
             assets:
-              - $(Pipeline.Workspace)/Win64_VS2017_Release/Win64_VS2017_Release.zip
-              - $(Pipeline.Workspace)/Win64_VS2017_Debug/Win64_VS2017_Debug.zip
-              - $(Pipeline.Workspace)/Win64_VS2019_Release/Win64_VS2019_Release.zip
-              - $(Pipeline.Workspace)/Win64_VS2019_Debug/Win64_VS2019_Debug.zip
+              $(Pipeline.Workspace)/Win64_VS2017_Release/Win64_VS2017_Release.zip
+              $(Pipeline.Workspace)/Win64_VS2017_Debug/Win64_VS2017_Debug.zip
+              $(Pipeline.Workspace)/Win64_VS2019_Release/Win64_VS2019_Release.zip
+              $(Pipeline.Workspace)/Win64_VS2019_Debug/Win64_VS2019_Debug.zip
             assetUploadMode: replace
