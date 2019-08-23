@@ -32,21 +32,22 @@ stages:
   - stage:
     displayName: Package
     jobs:
-      pool:
-        vmImage: windows-2019
-      steps:
-      # Download all the artifacts uploaded by the jobs in the Build stage.
-      - download: current
-      # Create a GitHub release containing the artifacts.
-      - task: GitHubRelease@0
-        inputs:
-          gitHubConnection: WAVM
-          action: create
-          target: $(Build.SourceVersion)
-          tagSource: auto
-          assets:
-            - $(Pipeline.Workspace)/Win64_VS2017_Release/Win64_VS2017_Release.zip
-            - $(Pipeline.Workspace)/Win64_VS2017_Debug/Win64_VS2017_Debug.zip
-            - $(Pipeline.Workspace)/Win64_VS2019_Release/Win64_VS2019_Release.zip
-            - $(Pipeline.Workspace)/Win64_VS2019_Debug/Win64_VS2019_Debug.zip
-          assetUploadMode: replace
+      - job: UploadGitHubRelease
+        pool:
+          vmImage: windows-2019
+        steps:
+        # Download all the artifacts uploaded by the jobs in the Build stage.
+        - download: current
+        # Create a GitHub release containing the artifacts.
+        - task: GitHubRelease@0
+          inputs:
+            gitHubConnection: WAVM
+            action: create
+            target: $(Build.SourceVersion)
+            tagSource: auto
+            assets:
+              - $(Pipeline.Workspace)/Win64_VS2017_Release/Win64_VS2017_Release.zip
+              - $(Pipeline.Workspace)/Win64_VS2017_Debug/Win64_VS2017_Debug.zip
+              - $(Pipeline.Workspace)/Win64_VS2019_Release/Win64_VS2019_Release.zip
+              - $(Pipeline.Workspace)/Win64_VS2019_Debug/Win64_VS2019_Debug.zip
+            assetUploadMode: replace
