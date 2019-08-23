@@ -54,7 +54,8 @@ stages:
             gitHubConnection: GitHubPAT
             action: create
             target: $(Build.SourceVersion)
-            tagSource: auto
+            tagSource: manual
+            tag: latest
             assets:
               $(Pipeline.Workspace)/Win64_VS2017_Release/Win64_VS2017_Release.zip
               $(Pipeline.Workspace)/Win64_VS2017_Debug/Win64_VS2017_Debug.zip
