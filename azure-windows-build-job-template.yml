@@ -27,6 +27,6 @@ jobs:
     - task: VSBuild@1
       displayName: Build LLVM
       inputs:
-        solution: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm/build/LLVM.sln'
+        solution: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm/LLVM.sln'
         platform: ${{ parameters.vsPlatform }}
         configuration: ${{ parameters.buildConfiguration }}
