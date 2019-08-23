@@ -15,6 +15,9 @@ jobs:
     timeoutInMinutes: 120
 
     steps:
+    - checkout: self
+      submodules: recursive
+
     - task: CMake@1
       displayName: Configure LLVM
       inputs:
