@@ -41,7 +41,7 @@ stages:
         # Create a GitHub release containing the artifacts.
         - task: GitHubRelease@0
           inputs:
-            gitHubConnection: WAVM
+            gitHubConnection: GitHubPAT
             action: create
             target: $(Build.SourceVersion)
             tagSource: auto
