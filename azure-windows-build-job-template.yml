@@ -28,5 +28,12 @@ jobs:
         platform: ${{ parameters.vsPlatform }}
         configuration: ${{ parameters.buildConfiguration }}
 
-    - publish: $(Build.ArtifactStagingDirectory)/install/llvm
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: $(Build.ArtifactStagingDirectory)/install/llvm
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/${{ parameters.name }}.zip
+
+    - publish: $(Build.ArtifactStagingDirectory)/${{ parameters.name }}.zip
       artifact: ${{ parameters.name }}

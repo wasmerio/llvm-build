@@ -1,25 +1,50 @@
-jobs:
-  - template: azure-windows-build-job-template.yml
-    parameters:
-      name: Win64_VS2017_Release
-      buildConfiguration: Release
-      vmImage: 'VS2017-Win2016'
-      cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
-  - template: azure-windows-build-job-template.yml
-    parameters:
-      name: Win64_VS2017_Debug
-      buildConfiguration: Debug
-      vmImage: 'VS2017-Win2016'
-      cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
-  - template: azure-windows-build-job-template.yml
-    parameters:
-      name: Win64_VS2019_Release
-      buildConfiguration: Release
-      vmImage: 'windows-2019'
-      cmakeArgs: '-G "Visual Studio 16 2019" -A x64'
-  - template: azure-windows-build-job-template.yml
-    parameters:
-      name: Win64_VS2019_Debug
-      buildConfiguration: Debug
-      vmImage: 'windows-2019'
-      cmakeArgs: '-G "Visual Studio 16 2019" -A x64'
+stages:
+  - stage:
+    displayName: Build
+    jobs:
+      - template: azure-windows-build-job-template.yml
+        parameters:
+          name: Win64_VS2017_Release
+          buildConfiguration: Release
+          vmImage: 'VS2017-Win2016'
+          cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
+      - template: azure-windows-build-job-template.yml
+        parameters:
+          name: Win64_VS2017_Debug
+          buildConfiguration: Debug
+          vmImage: 'VS2017-Win2016'
+          cmakeArgs: '-G "Visual Studio 15 2017 Win64"'
+      - template: azure-windows-build-job-template.yml
+        parameters:
+          name: Win64_VS2019_Release
+          buildConfiguration: Release
+          vmImage: 'windows-2019'
+          cmakeArgs: '-G "Visual Studio 16 2019" -A x64'
+      - template: azure-windows-build-job-template.yml
+        parameters:
+          name: Win64_VS2019_Debug
+          buildConfiguration: Debug
+          vmImage: 'windows-2019'
+          cmakeArgs: '-G "Visual Studio 16 2019" -A x64'
+
+  - stage:
+    displayName: Package
+    jobs:
+      pool:
+        vmImage: ${{ parameters.vmImage }}
+      steps:
+      # Download all the artifacts uploaded by the jobs in the Build stage.
+      - download: current
+      # Create a GitHub release containing the artifacts.
+      - task: GitHubRelease@0
+        inputs:
+          gitHubConnection: WAVM
+          action: create
+          target: $(Build.SourceVersion)
+          tagSource: auto
+          assets:
+            - $(Pipeline.Workspace)/Win64_VS2017_Release/Win64_VS2017_Release.zip
+            - $(Pipeline.Workspace)/Win64_VS2017_Debug/Win64_VS2017_Debug.zip
+            - $(Pipeline.Workspace)/Win64_VS2019_Release/Win64_VS2019_Release.zip
+            - $(Pipeline.Workspace)/Win64_VS2019_Debug/Win64_VS2019_Debug.zip
+          assetUploadMode: replace
