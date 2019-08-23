@@ -23,7 +23,7 @@ jobs:
       displayName: Build LLVM
       inputs:
         workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm'
-        cmakeArgs: '--build . --target install ${{ parameters.cmakeBuildArgs }} --parallel'
+        cmakeArgs: '--build . --target install ${{ parameters.cmakeBuildArgs }} --parallel 2'
 
     - task: ArchiveFiles@2
       inputs:
