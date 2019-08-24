@@ -1,7 +1,7 @@
 parameters:
   name: ''
   vmImage: 'macOS-10.14'
-  cmakeConfigArgs: '-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release'
+  cmakeConfigArgs: '-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   cmakeBuildArgs: ''
 
 jobs:

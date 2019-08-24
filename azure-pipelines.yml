@@ -5,9 +5,9 @@ stages:
       # MacOS 10.14
       - template: azure-build-job-template.yml
         parameters:
-          name: MacOSX14_Release
+          name: MacOSX14_RelWithDebInfo
           vmImage: 'macOS-10.14'
-          cmakeConfigArgs: '-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release'
+          cmakeConfigArgs: '-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RelWithDebInfo'
       - template: azure-build-job-template.yml
         parameters:
           name: MacOSX14_Debug
@@ -17,10 +17,10 @@ stages:
       # Win64 VS2017
       - template: azure-build-job-template.yml
         parameters:
-          name: Win64_VS2017_Release
+          name: Win64_VS2017_RelWithDebInfo
           vmImage: 'VS2017-Win2016'
           cmakeConfigArgs: '-G "Visual Studio 15 2017 Win64"'
-          cmakeBuildArgs: '--config Release'
+          cmakeBuildArgs: '--config RelWithDebInfo'
       - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2017_Debug
@@ -31,10 +31,10 @@ stages:
       # Win64 VS2019
       - template: azure-build-job-template.yml
         parameters:
-          name: Win64_VS2019_Release
+          name: Win64_VS2019_RelWithDebInfo
           vmImage: 'windows-2019'
           cmakeConfigArgs: '-G "Visual Studio 16 2019" -A x64'
-          cmakeBuildArgs: '--config Release'
+          cmakeBuildArgs: '--config RelWithDebInfo'
       - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2019_Debug
@@ -45,9 +45,9 @@ stages:
       # Ubuntu 16.04
       - template: azure-build-job-template.yml
         parameters:
-          name: Ubuntu1604_Release
+          name: Ubuntu1604_RelWithDebInfo
           vmImage: 'ubuntu-16.04'
-          cmakeConfigArgs: '-DCMAKE_BUILD_TYPE=Release'
+          cmakeConfigArgs: '-DCMAKE_BUILD_TYPE=RelWithDebInfo'
           cmakeBuildArgs: ''
       - template: azure-build-job-template.yml
         parameters:
@@ -60,7 +60,7 @@ stages:
   - stage:
     # Only upload a GitHub release if this is the main branch (implies it's not a pull request).
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-    displayName: Release
+    displayName: RelWithDebInfo
     jobs:
       - job: UploadGitHubRelease
         pool:
