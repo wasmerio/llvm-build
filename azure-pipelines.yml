@@ -75,7 +75,7 @@ stages:
         - task: GitHubRelease@0
           inputs:
             gitHubConnection: GitHubPAT
-            action: edit
+            action: create
             target: $(Build.SourceVersion)
             tagSource: manual
             tag: WAVM-LLVM-$(Build.BuildNumber)
