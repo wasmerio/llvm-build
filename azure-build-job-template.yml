@@ -46,8 +46,7 @@ jobs:
     # Build LLVM install
     - script: ninja install
       displayName: Build LLVM
-      inputs:
-        workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm'
+      workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm'
 
     # The LLVM install doesn't include PDB files, so manually copy them to the install directory
     - task: CopyFiles@2
