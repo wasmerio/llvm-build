@@ -17,14 +17,22 @@ jobs:
     - task: CMake@1
       displayName: Configure LLVM
       inputs:
-        workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm'
+        workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm'
         cmakeArgs: '${{ parameters.cmakeConfigArgs }} -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_INCLUDE_DOCS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_INCLUDE_GO_TESTS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_UTILS=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
 
     - task: CMake@1
       displayName: Build LLVM
       inputs:
-        workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm-project/llvm'
+        workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm'
         cmakeArgs: '--build . --target install ${{ parameters.cmakeBuildArgs }} --parallel 2'
+
+    # The LLVM install doesn't include PDB files, so manually copy them to the install directory
+    - task: CopyFiles@2
+      displayName: Copy PDBs
+      inputs:
+        sourceFolder: $(Build.ArtifactStagingDirectory)/llvm
+        contents: '**/*.pdb'
+        targetFolder: $(Build.ArtifactStagingDirectory)/install/llvm
 
     - task: ArchiveFiles@2
       inputs:
