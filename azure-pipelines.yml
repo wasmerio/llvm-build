@@ -52,7 +52,7 @@ stages:
         - task: GitHubRelease@0
           inputs:
             gitHubConnection: GitHubPAT
-            action: create
+            action: edit
             target: $(Build.SourceVersion)
             tagSource: manual
             tag: latest
