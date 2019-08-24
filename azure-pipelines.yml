@@ -47,8 +47,10 @@ stages:
           vmImage: windows-2019
         steps:
         # Download all the artifacts uploaded by the jobs in the Build stage.
-        - download: current
-          targetPath: $(Build.ArtifactStagingDirectory)
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: current
+            targetPath: $(Build.ArtifactStagingDirectory)
         # Create a GitHub release containing the artifacts.
         - task: GitHubRelease@0
           inputs:
