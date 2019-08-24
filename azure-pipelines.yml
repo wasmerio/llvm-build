@@ -13,6 +13,11 @@ stages:
           name: MacOSX14_Debug
           vmImage: 'macOS-10.14'
           config: Debug
+      - template: azure-build-job-template.yml
+        parameters:
+          name: MacOSX14_Release
+          vmImage: 'macOS-10.14'
+          config: Release
 
       # Win64 VS2017
       - template: azure-build-job-template.yml
@@ -25,6 +30,11 @@ stages:
           name: Win64_VS2017_Debug
           vmImage: 'VS2017-Win2016'
           config: Debug
+      - template: azure-build-job-template.yml
+        parameters:
+          name: Win64_VS2017_Release
+          vmImage: 'VS2017-Win2016'
+          config: Release
 
       # Win64 VS2019
       - template: azure-build-job-template.yml
@@ -37,6 +47,11 @@ stages:
           name: Win64_VS2019_Debug
           vmImage: 'windows-2019'
           config: Debug
+      - template: azure-build-job-template.yml
+        parameters:
+          name: Win64_VS2019_Release
+          vmImage: 'windows-2019'
+          config: Release
 
       # Ubuntu 16.04
       - template: azure-build-job-template.yml
@@ -49,6 +64,11 @@ stages:
           name: Ubuntu1604_Debug
           vmImage: 'ubuntu-16.04'
           config: Debug
+      - template: azure-build-job-template.yml
+        parameters:
+          name: Ubuntu1604_Release
+          vmImage: 'ubuntu-16.04'
+          config: Release
 
 
   - stage:
