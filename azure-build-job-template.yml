@@ -12,6 +12,7 @@ jobs:
     steps:
     - checkout: self
       submodules: recursive
+      fetchDepth: 1
 
     - task: CMake@1
       displayName: Configure LLVM
