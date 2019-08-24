@@ -2,6 +2,7 @@ parameters:
   name: ''
   vmImage: 'macOS-10.14'
   config: RelWithDebInfo
+  vcvarsPath:
 
 jobs:
   - job: ${{parameters.name}}
@@ -15,14 +16,19 @@ jobs:
 
     # Install ninja
     - script: choco install ninja
-      displayName: Install Ninja
+      displayName: Install Ninja (Windows)
       condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
     - script: brew install ninja
-      displayName: Install Ninja
+      displayName: Install Ninja (MacOS)
       condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
     - script: sudo apt install ninja-build
-      displayName: Install Ninja
+      displayName: Install Ninja (Linux)
       condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
+    # Configure the Windows toolchain
+    - script: call "${{parameters.vcvarsPath}}"
+      displayName: Configure Windows toolchain
+      condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
     # Configure LLVM
     - task: CMake@1
