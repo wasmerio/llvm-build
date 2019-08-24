@@ -1,30 +1,53 @@
 parameters:
   name: ''
   vmImage: 'macOS-10.14'
-  cmakeConfigArgs: '-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RelWithDebInfo'
-  cmakeBuildArgs: ''
+  config: RelWithDebInfo
 
 jobs:
-  - job: ${{ parameters.name }}
+  - job: ${{parameters.name}}
     pool:
-      vmImage: ${{ parameters.vmImage }}
+      vmImage: ${{parameters.vmImage}}
     timeoutInMinutes: 120
     steps:
     - checkout: self
       submodules: recursive
       fetchDepth: 1
 
+    # Install ninja
+    - script: choco install ninja
+      displayName: Install Ninja
+      condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+    - script: brew install ninja
+      displayName: Install Ninja
+      condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+    - script: sudo apt install ninja-build
+      displayName: Install Ninja
+      condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
+    # Configure LLVM
     - task: CMake@1
       displayName: Configure LLVM
       inputs:
         workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm'
-        cmakeArgs: '${{ parameters.cmakeConfigArgs }} -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm -DLLVM_TARGETS_TO_BUILD=X86;AArch64 -DLLVM_INCLUDE_DOCS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_INCLUDE_GO_TESTS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_UTILS=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/'
+        cmakeArgs: >
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=${{parameters.config}}
+          -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm
+          -DLLVM_TARGETS_TO_BUILD=X86;AArch64
+          -DLLVM_INCLUDE_DOCS=OFF
+          -DLLVM_INCLUDE_EXAMPLES=OFF
+          -DLLVM_INCLUDE_GO_TESTS=OFF
+          -DLLVM_INCLUDE_TOOLS=OFF
+          -DLLVM_INCLUDE_UTILS=OFF
+          -DLLVM_INCLUDE_TESTS=OFF
+          -DLLVM_OPTIMIZED_TABLEGEN=ON
+          $(Build.SourcesDirectory)/llvm-project/llvm/
 
-    - task: CMake@1
+    # Build LLVM install
+    - script: ninja install
       displayName: Build LLVM
       inputs:
         workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm'
-        cmakeArgs: '--build . --target install ${{ parameters.cmakeBuildArgs }} --parallel 2'
 
     # The LLVM install doesn't include PDB files, so manually copy them to the install directory
     - task: CopyFiles@2
@@ -34,12 +57,15 @@ jobs:
         contents: '**/*.pdb'
         targetFolder: $(Build.ArtifactStagingDirectory)/install/llvm
 
+    # Build an archive with the LLVM install
     - task: ArchiveFiles@2
+      displayName: Archive LLVM install
       inputs:
         rootFolderOrFile: $(Build.ArtifactStagingDirectory)/install/llvm
         includeRootFolder: false
         archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/${{ parameters.name }}.zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/${{parameters.name}}.zip
 
-    - publish: $(Build.ArtifactStagingDirectory)/${{ parameters.name }}.zip
-      artifact: ${{ parameters.name }}
+    # Publish the LLVM install archive as an artifact
+    - publish: $(Build.ArtifactStagingDirectory)/${{parameters.name}}.zip
+      artifact: ${{parameters.name}}
