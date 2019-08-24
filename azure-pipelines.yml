@@ -56,11 +56,5 @@ stages:
             target: $(Build.SourceVersion)
             tagSource: manual
             tag: latest
-            assets:
-              $(Pipeline.Workspace)/Win64_VS2017_Release/Win64_VS2017_Release.zip
-              $(Pipeline.Workspace)/Win64_VS2017_Debug/Win64_VS2017_Debug.zip
-              $(Pipeline.Workspace)/Win64_VS2019_Release/Win64_VS2019_Release.zip
-              $(Pipeline.Workspace)/Win64_VS2019_Debug/Win64_VS2019_Debug.zip
-              $(Pipeline.Workspace)/MacOSX14_Release/MacOSX14_Release.zip
-              $(Pipeline.Workspace)/MacOSX14_Debug/MacOSX14_Debug.zip
+            assets: $(Pipeline.Workspace)/*.zip
             assetUploadMode: replace
