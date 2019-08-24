@@ -60,7 +60,7 @@ stages:
             tagSource: manual
             tag: WAVM-LLVM-$(Build.BuildNumber)
             title: WAVM-LLVM-$(Build.BuildNumber)
-            assets: $(Build.ArtifactStagingDirectory)/*
+            assets: $(Build.ArtifactStagingDirectory)/**/*.zip
             releaseNotesSource: input
             releaseNotes:
             addChangeLog: false
