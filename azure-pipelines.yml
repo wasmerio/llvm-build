@@ -48,6 +48,7 @@ stages:
         steps:
         # Download all the artifacts uploaded by the jobs in the Build stage.
         - download: current
+          targetPath: $(Build.ArtifactStagingDirectory)
         # Create a GitHub release containing the artifacts.
         - task: GitHubRelease@0
           inputs:
@@ -55,6 +56,9 @@ stages:
             action: edit
             target: $(Build.SourceVersion)
             tagSource: manual
-            tag: latest
-            assets: $(Pipeline.Workspace)/*.zip
-            assetUploadMode: replace
+            tag: WAVM-LLVM-$(Build.BuildNumber)
+            title: WAVM-LLVM-$(Build.BuildNumber)
+            assets: $(Build.ArtifactStagingDirectory)/*
+            releaseNotesSource: input
+            releaseNotes:
+            addChangeLog: false
