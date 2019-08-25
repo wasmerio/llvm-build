@@ -21,6 +21,12 @@ stages:
           vmImage: 'VS2017-Win2016'
           config: Release
           toolchainScript: call toolchain/windows-vs2017-x64.bat
+      - template: azure-build-job-template.yml
+        parameters:
+          name: Win64_VS2017_MinSizeRel
+          vmImage: 'VS2017-Win2016'
+          config: MinSizeRel
+          toolchainScript: call toolchain/windows-vs2017-x64.bat
 
       # Win64 VS2019
       - template: azure-build-job-template.yml
@@ -40,6 +46,12 @@ stages:
           name: Win64_VS2019_Release
           vmImage: 'windows-2019'
           config: Release
+          toolchainScript: call toolchain/windows-vs2019-x64.bat
+      - template: azure-build-job-template.yml
+        parameters:
+          name: Win64_VS2019_MinSizeRel
+          vmImage: 'windows-2019'
+          config: MinSizeRel
           toolchainScript: call toolchain/windows-vs2019-x64.bat
 
       # Ubuntu 16.04
@@ -61,6 +73,12 @@ stages:
           vmImage: 'ubuntu-16.04'
           config: Release
           toolchainScript: source toolchain/ubuntu-gcc.sh
+      - template: azure-build-job-template.yml
+        parameters:
+          name: Ubuntu1604_MinSizeRel
+          vmImage: 'ubuntu-16.04'
+          config: MinSizeRel
+          toolchainScript: source toolchain/ubuntu-gcc.sh
 
       # MacOS 10.14
       - template: azure-build-job-template.yml
@@ -80,6 +98,12 @@ stages:
           name: MacOSX14_Release
           vmImage: 'macOS-10.14'
           config: Release
+          toolchainScript: source toolchain/macos-clang.sh
+      - template: azure-build-job-template.yml
+        parameters:
+          name: MacOSX14_MinSizeRel
+          vmImage: 'macOS-10.14'
+          config: MinSizeRel
           toolchainScript: source toolchain/macos-clang.sh
 
 
