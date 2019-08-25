@@ -8,16 +8,19 @@ stages:
           name: MacOSX14_RelWithDebInfo
           vmImage: 'macOS-10.14'
           config: RelWithDebInfo
+          toolchainScript: source toolchain/macos-clang.sh
       - template: azure-build-job-template.yml
         parameters:
           name: MacOSX14_Debug
           vmImage: 'macOS-10.14'
           config: Debug
+          toolchainScript: source toolchain/macos-clang.sh
       - template: azure-build-job-template.yml
         parameters:
           name: MacOSX14_Release
           vmImage: 'macOS-10.14'
           config: Release
+          toolchainScript: source toolchain/macos-clang.sh
 
       # Win64 VS2017
       - template: azure-build-job-template.yml
@@ -25,19 +28,19 @@ stages:
           name: Win64_VS2017_RelWithDebInfo
           vmImage: 'VS2017-Win2016'
           config: RelWithDebInfo
-          vcvarsPath: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+          toolchainScript: call toolchain/windows-vs2017-x64.bat
       - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2017_Debug
           vmImage: 'VS2017-Win2016'
           config: Debug
-          vcvarsPath: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+          toolchainScript: call toolchain/windows-vs2017-x64.bat
       - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2017_Release
           vmImage: 'VS2017-Win2016'
           config: Release
-          vcvarsPath: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+          toolchainScript: call toolchain/windows-vs2017-x64.bat
 
       # Win64 VS2019
       - template: azure-build-job-template.yml
@@ -45,19 +48,19 @@ stages:
           name: Win64_VS2019_RelWithDebInfo
           vmImage: 'windows-2019'
           config: RelWithDebInfo
-          vcvarsPath: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+          toolchainScript: call toolchain/windows-vs2019-x64.bat
       - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2019_Debug
           vmImage: 'windows-2019'
           config: Debug
-          vcvarsPath: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+          toolchainScript: call toolchain/windows-vs2019-x64.bat
       - template: azure-build-job-template.yml
         parameters:
           name: Win64_VS2019_Release
           vmImage: 'windows-2019'
           config: Release
-          vcvarsPath: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+          toolchainScript: call toolchain/windows-vs2019-x64.bat
 
       # Ubuntu 16.04
       - template: azure-build-job-template.yml
@@ -65,16 +68,19 @@ stages:
           name: Ubuntu1604_RelWithDebInfo
           vmImage: 'ubuntu-16.04'
           config: RelWithDebInfo
+          toolchainScript: source toolchain/ubuntu-gcc.sh
       - template: azure-build-job-template.yml
         parameters:
           name: Ubuntu1604_Debug
           vmImage: 'ubuntu-16.04'
           config: Debug
+          toolchainScript: source toolchain/ubuntu-gcc.sh
       - template: azure-build-job-template.yml
         parameters:
           name: Ubuntu1604_Release
           vmImage: 'ubuntu-16.04'
           config: Release
+          toolchainScript: source toolchain/ubuntu-gcc.sh
 
 
   - stage:

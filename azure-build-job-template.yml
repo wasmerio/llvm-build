@@ -2,7 +2,7 @@ parameters:
   name: ''
   vmImage: 'macOS-10.14'
   config: RelWithDebInfo
-  vcvarsPath:
+  toolchainScript: source toolchain/macos-clang.sh
 
 jobs:
   - job: ${{parameters.name}}
@@ -14,45 +14,16 @@ jobs:
       submodules: recursive
       fetchDepth: 1
 
-    # Install ninja
-    - script: choco install ninja
-      displayName: Install Ninja (Windows)
-      condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
-    - script: brew install ninja
-      displayName: Install Ninja (MacOS)
-      condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
-    - script: sudo apt install ninja-build
-      displayName: Install Ninja (Linux)
-      condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
-
-    # Configure the Windows toolchain
-    - script: call "${{parameters.vcvarsPath}}"
-      displayName: Configure Windows toolchain
-      condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
-
-    # Configure LLVM
-    - task: CMake@1
-      displayName: Configure LLVM
-      inputs:
-        workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm'
-        cmakeArgs: >
-          -G Ninja
-          -DCMAKE_BUILD_TYPE=${{parameters.config}}
-          -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm
-          -DLLVM_TARGETS_TO_BUILD=X86;AArch64
-          -DLLVM_INCLUDE_DOCS=OFF
-          -DLLVM_INCLUDE_EXAMPLES=OFF
-          -DLLVM_INCLUDE_GO_TESTS=OFF
-          -DLLVM_INCLUDE_TOOLS=OFF
-          -DLLVM_INCLUDE_UTILS=OFF
-          -DLLVM_INCLUDE_TESTS=OFF
-          -DLLVM_OPTIMIZED_TABLEGEN=ON
-          $(Build.SourcesDirectory)/llvm-project/llvm/
-
-    # Build LLVM install
-    - script: ninja install
+    # Configure and build a LLVM install.
+    - script: |
+        ${{parameters.toolchainScript}}
+        cd $(Build.ArtifactStagingDirectory)
+        mkdir llvm
+        cd llvm
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=${{parameters.config}} -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm -DLLVM_TARGETS_TO_BUILD="X86;AArch64" -DLLVM_INCLUDE_DOCS=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_INCLUDE_GO_TESTS=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_UTILS=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_OPTIMIZED_TABLEGEN=ON $(Build.SourcesDirectory)/llvm-project/llvm/
+        ninja -v install
       displayName: Build LLVM
-      workingDirectory: '$(Build.ArtifactStagingDirectory)/llvm'
+      workingDirectory: $(Build.SourcesDirectory)
 
     # The LLVM install doesn't include PDB files, so manually copy them to the install directory
     - task: CopyFiles@2
