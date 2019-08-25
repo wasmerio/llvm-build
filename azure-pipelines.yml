@@ -2,26 +2,6 @@ stages:
   - stage:
     displayName: Build
     jobs:
-      # MacOS 10.14
-      - template: azure-build-job-template.yml
-        parameters:
-          name: MacOSX14_RelWithDebInfo
-          vmImage: 'macOS-10.14'
-          config: RelWithDebInfo
-          toolchainScript: source toolchain/macos-clang.sh
-      - template: azure-build-job-template.yml
-        parameters:
-          name: MacOSX14_Debug
-          vmImage: 'macOS-10.14'
-          config: Debug
-          toolchainScript: source toolchain/macos-clang.sh
-      - template: azure-build-job-template.yml
-        parameters:
-          name: MacOSX14_Release
-          vmImage: 'macOS-10.14'
-          config: Release
-          toolchainScript: source toolchain/macos-clang.sh
-
       # Win64 VS2017
       - template: azure-build-job-template.yml
         parameters:
@@ -81,6 +61,26 @@ stages:
           vmImage: 'ubuntu-16.04'
           config: Release
           toolchainScript: source toolchain/ubuntu-gcc.sh
+
+      # MacOS 10.14
+      - template: azure-build-job-template.yml
+        parameters:
+          name: MacOSX14_RelWithDebInfo
+          vmImage: 'macOS-10.14'
+          config: RelWithDebInfo
+          toolchainScript: source toolchain/macos-clang.sh
+      - template: azure-build-job-template.yml
+        parameters:
+          name: MacOSX14_Debug
+          vmImage: 'macOS-10.14'
+          config: Debug
+          toolchainScript: source toolchain/macos-clang.sh
+      - template: azure-build-job-template.yml
+        parameters:
+          name: MacOSX14_Release
+          vmImage: 'macOS-10.14'
+          config: Release
+          toolchainScript: source toolchain/macos-clang.sh
 
 
   - stage:
