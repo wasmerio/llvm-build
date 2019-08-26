@@ -12,7 +12,6 @@ jobs:
     steps:
     - checkout: self
       submodules: recursive
-      fetchDepth: 1
 
     # Configure and build a LLVM install.
     - script: |
