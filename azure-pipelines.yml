@@ -108,8 +108,8 @@ stages:
 
 
   - stage:
-    # Only upload a GitHub release if this is the main branch (implies it's not a pull request).
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    # Only upload a GitHub release if this is a release branch (implies it's not a pull request).
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
     displayName: Create GitHub release
     jobs:
       - job: UploadGitHubRelease
@@ -125,11 +125,11 @@ stages:
         - task: GitHubRelease@0
           inputs:
             gitHubConnection: GitHubPAT
-            action: create
+            action: edit
             target: $(Build.SourceVersion)
             tagSource: manual
-            tag: WAVM-LLVM-$(Build.BuildNumber)
-            title: WAVM-LLVM-$(Build.BuildNumber)
+            tag: $(Build.SourceBranchName)
+            title: $(Build.SourceBranchName)
             assets: $(Build.ArtifactStagingDirectory)/**/*.zip
             releaseNotesSource: input
             releaseNotes:
