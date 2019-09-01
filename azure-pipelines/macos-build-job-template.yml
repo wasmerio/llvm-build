@@ -1,0 +1,55 @@
+parameters:
+  baseName: ''
+
+jobs:
+  - job: ${{parameters.baseName}}
+    pool: { vmImage: 'macOS-10.14' }
+    timeoutInMinutes: 120
+
+    strategy:
+      matrix:
+        LTO: 
+          configName: LTO
+          configArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_LTO=Thin
+        Release:
+          configName: Release
+          configArgs: -DCMAKE_BUILD_TYPE=Release
+        Checked:
+          configName: Checked
+          configArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON
+        Sanitized:
+          configName: Sanitized
+          configArgs: >
+            -DCMAKE_BUILD_TYPE=Release
+            -DLLVM_ENABLE_ASSERTIONS=ON
+            -DLLVM_USE_SANITIZE_COVERAGE=ON
+            -DLLVM_USE_SANITIZER="Address;Undefined"
+
+    steps:
+    - checkout: self
+      submodules: recursive
+
+    # Install ninja-build
+    - script: brew install ninja
+
+    # Configure LLVM
+    - template: /azure-pipelines/cmake-configure-step-template.yml
+      parameters:
+        cmakeArgs: >
+          -G Ninja
+          -DCMAKE_C_COMPILER=clang
+          -DCMAKE_CXX_COMPILER=clang++
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=10.11
+          -DCMAKE_C_FLAGS=-fvisibility=hidden
+          -DCMAKE_CXX_FLAGS=-fvisibility=hidden
+          $(configArgs)
+
+    # Build LLVM
+    - script: ninja -v install
+      displayName: Build LLVM
+      workingDirectory: $(Build.ArtifactStagingDirectory)/llvm
+
+    # Publish the install as an artifact
+    - template: /azure-pipelines/publish-steps-template.yml
+      parameters:
+        artifactName: ${{parameters.baseName}}_$(configName)

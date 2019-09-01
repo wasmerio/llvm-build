@@ -1,0 +1,17 @@
+parameters:
+  installPath: '$(Build.ArtifactStagingDirectory)/install/llvm'
+  artifactName: 'artifact'
+
+steps:
+  # Build an archive with the LLVM install
+  - task: ArchiveFiles@2
+    displayName: Archive LLVM install
+    inputs:
+      rootFolderOrFile: ${{parameters.installPath}}
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}.zip
+
+  # Publish the LLVM install archive as an artifact
+  - publish: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}.zip
+    artifact: ${{parameters.artifactName}}
