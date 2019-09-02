@@ -13,10 +13,9 @@ jobs:
           configName: Release
           buildConfig: Release
           configArgs: ''
-        Checked:
-          configName: Checked
-          buildConfig: Release
-          configArgs: -DLLVM_ENABLE_ASSERTIONS=ON
+        Debug:
+          configName: Debug
+          buildConfig: Debug
 
     steps:
     - checkout: self
