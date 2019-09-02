@@ -16,6 +16,7 @@ jobs:
         Debug:
           configName: Debug
           buildConfig: Debug
+          configArgs: ''
 
     steps:
     - checkout: self
