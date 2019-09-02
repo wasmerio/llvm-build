@@ -2,110 +2,34 @@ stages:
   - stage:
     displayName: Build
     jobs:
-      # Win64 VS2017
-      - template: azure-build-job-template.yml
-        parameters:
-          name: Win64_VS2017_RelWithDebInfo
-          vmImage: 'VS2017-Win2016'
-          config: RelWithDebInfo
-          toolchainScript: call toolchain/windows-vs2017-x64.bat
-      - template: azure-build-job-template.yml
-        parameters:
-          name: Win64_VS2017_Debug
-          vmImage: 'VS2017-Win2016'
-          config: Debug
-          toolchainScript: call toolchain/windows-vs2017-x64.bat
-      - template: azure-build-job-template.yml
-        parameters:
-          name: Win64_VS2017_Release
-          vmImage: 'VS2017-Win2016'
-          config: Release
-          toolchainScript: call toolchain/windows-vs2017-x64.bat
-      - template: azure-build-job-template.yml
-        parameters:
-          name: Win64_VS2017_MinSizeRel
-          vmImage: 'VS2017-Win2016'
-          config: MinSizeRel
-          toolchainScript: call toolchain/windows-vs2017-x64.bat
-
-      # Win64 VS2019
-      - template: azure-build-job-template.yml
-        parameters:
-          name: Win64_VS2019_RelWithDebInfo
-          vmImage: 'windows-2019'
-          config: RelWithDebInfo
-          toolchainScript: call toolchain/windows-vs2019-x64.bat
-      - template: azure-build-job-template.yml
-        parameters:
-          name: Win64_VS2019_Debug
-          vmImage: 'windows-2019'
-          config: Debug
-          toolchainScript: call toolchain/windows-vs2019-x64.bat
-      - template: azure-build-job-template.yml
-        parameters:
-          name: Win64_VS2019_Release
-          vmImage: 'windows-2019'
-          config: Release
-          toolchainScript: call toolchain/windows-vs2019-x64.bat
-      - template: azure-build-job-template.yml
-        parameters:
-          name: Win64_VS2019_MinSizeRel
-          vmImage: 'windows-2019'
-          config: MinSizeRel
-          toolchainScript: call toolchain/windows-vs2019-x64.bat
-
       # Ubuntu 16.04
-      - template: azure-build-job-template.yml
+      - template: /azure-pipelines/linux-build-job-template.yml
         parameters:
-          name: Ubuntu1604_RelWithDebInfo
-          vmImage: 'ubuntu-16.04'
-          config: RelWithDebInfo
-          toolchainScript: source toolchain/ubuntu-gcc.sh
-      - template: azure-build-job-template.yml
+          baseName: 'Ubuntu1604'
+          container: 'wavm/ubuntu16.04-builder:latest'
+
+      # CentOS 7.0
+      - template: /azure-pipelines/linux-build-job-template.yml
         parameters:
-          name: Ubuntu1604_Debug
-          vmImage: 'ubuntu-16.04'
-          config: Debug
-          toolchainScript: source toolchain/ubuntu-gcc.sh
-      - template: azure-build-job-template.yml
+          baseName: 'Centos70'
+          container: 'wavm/centos7.0-builder:latest'
+
+      # Win32
+      - template: /azure-pipelines/windows-build-job-template.yml
         parameters:
-          name: Ubuntu1604_Release
-          vmImage: 'ubuntu-16.04'
-          config: Release
-          toolchainScript: source toolchain/ubuntu-gcc.sh
-      - template: azure-build-job-template.yml
+          baseName: 'Win32'
+          platform: 'Win32'
+
+      # Win64
+      - template: /azure-pipelines/windows-build-job-template.yml
         parameters:
-          name: Ubuntu1604_MinSizeRel
-          vmImage: 'ubuntu-16.04'
-          config: MinSizeRel
-          toolchainScript: source toolchain/ubuntu-gcc.sh
+          baseName: 'Win64'
+          platform: 'x64'
 
       # MacOS 10.14
-      - template: azure-build-job-template.yml
+      - template: /azure-pipelines/macos-build-job-template.yml
         parameters:
-          name: MacOSX14_RelWithDebInfo
-          vmImage: 'macOS-10.14'
-          config: RelWithDebInfo
-          toolchainScript: source toolchain/macos-clang.sh
-      - template: azure-build-job-template.yml
-        parameters:
-          name: MacOSX14_Debug
-          vmImage: 'macOS-10.14'
-          config: Debug
-          toolchainScript: source toolchain/macos-clang.sh
-      - template: azure-build-job-template.yml
-        parameters:
-          name: MacOSX14_Release
-          vmImage: 'macOS-10.14'
-          config: Release
-          toolchainScript: source toolchain/macos-clang.sh
-      - template: azure-build-job-template.yml
-        parameters:
-          name: MacOSX14_MinSizeRel
-          vmImage: 'macOS-10.14'
-          config: MinSizeRel
-          toolchainScript: source toolchain/macos-clang.sh
-
+          baseName: 'MacOS'
 
   - stage:
     # Only upload a GitHub release if this is a release branch (implies it's not a pull request).
@@ -116,16 +40,33 @@ stages:
         pool:
           vmImage: windows-2019
         steps:
+
         # Download all the artifacts uploaded by the jobs in the Build stage.
         - task: DownloadPipelineArtifact@2
+          displayName: Download artifacts
           inputs:
             buildType: current
             targetPath: $(Build.ArtifactStagingDirectory)
+
+        # Delete the old GitHub release for this branch.
+        - task: GitHubRelease@0
+          displayName: Delete old GitHub release
+          inputs:
+            action: 'delete'
+            tag: $(Build.SourceBranchName)
+
+        # Delete the old release tag on GitHub.
+        - script: |
+            git -c http.extraheader="AUTHORIZATION: basic ***" push origin :$(Build.SourceBranchName)
+          displayName: Delete old GitHub release tag
+          continueOnError: true
+
         # Create a GitHub release containing the artifacts.
         - task: GitHubRelease@0
+          displayName: Create GitHub release
           inputs:
-            gitHubConnection: GitHubPAT
-            action: edit
+            gitHubConnection: GitHub-WAVM-AzurePipelines
+            action: create
             target: $(Build.SourceVersion)
             tagSource: manual
             tag: $(Build.SourceBranchName)

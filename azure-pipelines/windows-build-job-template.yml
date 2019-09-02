@@ -1,0 +1,50 @@
+parameters:
+  baseName: ''
+  platform: ''
+
+jobs:
+  - job: ${{parameters.baseName}}
+    pool: { vmImage: 'windows-2019' }
+    timeoutInMinutes: 120
+
+    strategy:
+      matrix:
+        Release:
+          configName: Release
+          buildConfig: Release
+          configArgs: ''
+        Debug:
+          configName: Debug
+          buildConfig: Debug
+          configArgs: ''
+
+    steps:
+    - checkout: self
+      submodules: recursive
+
+    # Configure LLVM
+    - template: /azure-pipelines/cmake-configure-step-template.yml
+      parameters:
+        cmakeArgs: >
+          -G "Visual Studio 16 2019" -A ${{parameters.platform}}
+          $(configArgs)
+
+    # Build LLVM
+    - task: MSBuild@1
+      displayName: Build LLVM
+      inputs:
+        solution: $(Build.ArtifactStagingDirectory)/llvm/INSTALL.vcxproj
+        configuration: $(buildConfig)
+
+    # The LLVM install doesn't include PDB files, so manually copy them to the install directory
+    - task: CopyFiles@2
+      displayName: Copy PDBs
+      inputs:
+        sourceFolder: $(Build.ArtifactStagingDirectory)/llvm
+        contents: '**/*.pdb'
+        targetFolder: $(Build.ArtifactStagingDirectory)/install/llvm
+
+    # Publish the install as an artifact
+    - template: /azure-pipelines/publish-steps-template.yml
+      parameters:
+        artifactName: ${{parameters.baseName}}_$(configName)
