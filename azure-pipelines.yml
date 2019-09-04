@@ -40,6 +40,8 @@ stages:
         pool:
           vmImage: windows-2019
         steps:
+        - checkout: self
+          persistCredentials: true
 
         # Download all the artifacts uploaded by the jobs in the Build stage.
         - task: DownloadPipelineArtifact@2
@@ -48,8 +50,24 @@ stages:
             buildType: current
             targetPath: $(Build.ArtifactStagingDirectory)
 
-        # Delete the old GitHub release for this branch.
+        # Check whether this release already exists.
+        - bash: |
+            # Just fetch the release URL instead of querying the API, since API requests from the
+            # Azure Pipelines agents are often rate limited by GitHub.
+            #if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://api.github.com/repos/WAVM/WAVM/releases/tags/nightly/$(buildDate)) = 200 ]]
+            if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://github.com/WAVM/WAVM/releases/tag/nightly%2F$(buildDate)) = 200 ]]
+            then
+              echo "##vso[task.setvariable variable=deleteOldRelease]true"
+              echo "Found old release with the build's date"
+            else
+              echo "##vso[task.setvariable variable=deleteOldRelease]false"
+              echo "Did not find old release with the build's date"
+            fi
+          displayName: Check for existing release
+
+        # If there's an old version of this release, delete the old GitHub release.
         - task: GitHubRelease@0
+          condition: and(succeeded(), eq(variables.deleteOldRelease, 'true'))
           displayName: Delete old GitHub release
           inputs:
             gitHubConnection: GitHub-WAVM-AzurePipelines
@@ -60,7 +78,7 @@ stages:
         - script: |
             git -c http.extraheader="AUTHORIZATION: basic ***" push origin :$(Build.SourceBranchName)
           displayName: Delete old GitHub release tag
-          continueOnError: true
+          condition: and(succeeded(), eq(variables.deleteOldRelease, 'true'))
 
         # Create a GitHub release containing the artifacts.
         - task: GitHubRelease@0
