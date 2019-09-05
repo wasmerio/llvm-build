@@ -1,25 +1,32 @@
 parameters:
   baseName: ''
+  vmImage: ''
+  container: ''
+  installToolchainSteps: []
+  cmakeArgs: ''
 
 jobs:
   - job: ${{parameters.baseName}}
-    pool: { vmImage: 'macOS-10.14' }
+    pool:
+		vmImage: ${{parameters.vmImage}}
+	${{if ne(parameters.container, '')}}:
+    	container: ${{parameters.container}}
     timeoutInMinutes: 120
 
     strategy:
       matrix:
         LTO: 
           configName: LTO
-          configArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_LTO=Thin
+          cmakeArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_LTO=Thin
         Release:
           configName: Release
-          configArgs: -DCMAKE_BUILD_TYPE=Release
+          cmakeArgs: -DCMAKE_BUILD_TYPE=Release
         Checked:
           configName: Checked
-          configArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON
+          cmakeArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON
         Sanitized:
           configName: Sanitized
-          configArgs: >
+          cmakeArgs: >
             -DCMAKE_BUILD_TYPE=Release
             -DLLVM_ENABLE_ASSERTIONS=ON
             -DLLVM_USE_SANITIZE_COVERAGE=ON
@@ -29,8 +36,7 @@ jobs:
     - checkout: self
       submodules: recursive
 
-    # Install ninja-build
-    - script: brew install ninja
+    - ${{parameters.installToolchainSteps}}
 
     # Configure LLVM
     - template: /azure-pipelines/cmake-configure-step-template.yml
@@ -39,10 +45,14 @@ jobs:
           -G Ninja
           -DCMAKE_C_COMPILER=clang
           -DCMAKE_CXX_COMPILER=clang++
-          -DCMAKE_OSX_DEPLOYMENT_TARGET=10.11
+          -DCMAKE_RANLIB=/usr/local/bin/llvm-ranlib
+          -DCMAKE_AR=/usr/local/bin/llvm-ar
+          -DLLVM_USE_LINKER=lld
           -DCMAKE_C_FLAGS=-fvisibility=hidden
           -DCMAKE_CXX_FLAGS=-fvisibility=hidden
-          $(configArgs)
+          -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
+          $(cmakeArgs)
+          ${{parameters.cmakeArgs}}
 
     # Build LLVM
     - script: ninja -v install
