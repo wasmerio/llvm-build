@@ -3,15 +3,27 @@ stages:
     displayName: Build
     jobs:
       # Ubuntu 16.04
-      - template: /azure-pipelines/linux-build-job-template.yml
+      - template: /azure-pipelines/posix-build-job-template.yml
         parameters:
           baseName: 'Ubuntu1604'
+          vmImage: 'ubuntu-16.04'
+          cmakeArgs: >
+            -DCMAKE_RANLIB=/usr/local/bin/llvm-ranlib
+            -DCMAKE_AR=/usr/local/bin/llvm-ar
+            -DLLVM_USE_LINKER=lld
+            -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
           container: 'wavm/ubuntu16.04-builder:latest'
 
       # CentOS 7.0
-      - template: /azure-pipelines/linux-build-job-template.yml
+      - template: /azure-pipelines/posix-build-job-template.yml
         parameters:
           baseName: 'Centos70'
+          vmImage: 'ubuntu-16.04'
+          cmakeArgs: >
+            -DCMAKE_RANLIB=/usr/local/bin/llvm-ranlib
+            -DCMAKE_AR=/usr/local/bin/llvm-ar
+            -DLLVM_USE_LINKER=lld
+            -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
           container: 'wavm/centos7.0-builder:latest'
 
       # Win32
@@ -27,9 +39,13 @@ stages:
           platform: 'x64'
 
       # MacOS 10.14
-      - template: /azure-pipelines/macos-build-job-template.yml
+      - template: /azure-pipelines/posix-build-job-template.yml
         parameters:
+          vmImage: 'macOS-10.14'
           baseName: 'MacOS'
+          cmakeArgs: -DCMAKE_OSX_DEPLOYMENT_TARGET=10.11
+          installToolchainSteps:
+            - script: brew install ninja
 
   - stage:
     # Only upload a GitHub release if this is a release branch (implies it's not a pull request).
@@ -40,6 +56,8 @@ stages:
         pool:
           vmImage: windows-2019
         steps:
+        - checkout: self
+          persistCredentials: true
 
         # Download all the artifacts uploaded by the jobs in the Build stage.
         - task: DownloadPipelineArtifact@2
@@ -48,10 +66,27 @@ stages:
             buildType: current
             targetPath: $(Build.ArtifactStagingDirectory)
 
-        # Delete the old GitHub release for this branch.
+        # Check whether this release already exists.
+        - bash: |
+            # Just fetch the release URL instead of querying the API, since API requests from the
+            # Azure Pipelines agents are often rate limited by GitHub.
+            #if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://api.github.com/repos/WAVM/WAVM/releases/tags/nightly/$(buildDate)) = 200 ]]
+            if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://github.com/WAVM/WAVM/releases/tag/nightly%2F$(buildDate)) = 200 ]]
+            then
+              echo "##vso[task.setvariable variable=deleteOldRelease]true"
+              echo "Found old release with the build's date"
+            else
+              echo "##vso[task.setvariable variable=deleteOldRelease]false"
+              echo "Did not find old release with the build's date"
+            fi
+          displayName: Check for existing release
+
+        # If there's an old version of this release, delete the old GitHub release.
         - task: GitHubRelease@0
+          condition: and(succeeded(), eq(variables.deleteOldRelease, 'true'))
           displayName: Delete old GitHub release
           inputs:
+            gitHubConnection: GitHub-WAVM-AzurePipelines
             action: 'delete'
             tag: $(Build.SourceBranchName)
 
@@ -59,7 +94,7 @@ stages:
         - script: |
             git -c http.extraheader="AUTHORIZATION: basic ***" push origin :$(Build.SourceBranchName)
           displayName: Delete old GitHub release tag
-          continueOnError: true
+          condition: and(succeeded(), eq(variables.deleteOldRelease, 'true'))
 
         # Create a GitHub release containing the artifacts.
         - task: GitHubRelease@0
