@@ -8,9 +8,9 @@ parameters:
 jobs:
   - job: ${{parameters.baseName}}
     pool:
-		vmImage: ${{parameters.vmImage}}
-	${{if ne(parameters.container, '')}}:
-    	container: ${{parameters.container}}
+      vmImage: ${{parameters.vmImage}}
+    ${{if ne(parameters.container, '')}}:
+      container: ${{parameters.container}}
     timeoutInMinutes: 120
 
     strategy:
