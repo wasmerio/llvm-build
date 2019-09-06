@@ -71,7 +71,7 @@ stages:
             # Just fetch the release URL instead of querying the API, since API requests from the
             # Azure Pipelines agents are often rate limited by GitHub.
             #if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://api.github.com/repos/WAVM/WAVM-LLVM/releases/tag/$(Build.SourceBranchName)) = 200 ]]
-            if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://github.com/WAVM/WAVM/releases/tag/$(Build.SourceBranchName)) = 200 ]]
+            if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://github.com/WAVM/WAVM-LLVM/releases/tag/$(Build.SourceBranchName)) = 200 ]]
             then
               echo "##vso[task.setvariable variable=deleteOldRelease]true"
               echo "Found old release with the build's date"
