@@ -7,7 +7,7 @@ stages:
         parameters:
           baseName: 'Ubuntu1604'
           vmImage: 'ubuntu-16.04'
-          cmakeArgs: >
+          cmakeArgs:
             -DCMAKE_RANLIB=/usr/local/bin/llvm-ranlib
             -DCMAKE_AR=/usr/local/bin/llvm-ar
             -DLLVM_USE_LINKER=lld
@@ -19,7 +19,7 @@ stages:
         parameters:
           baseName: 'Centos70'
           vmImage: 'ubuntu-16.04'
-          cmakeArgs: >
+          cmakeArgs:
             -DCMAKE_RANLIB=/usr/local/bin/llvm-ranlib
             -DCMAKE_AR=/usr/local/bin/llvm-ar
             -DLLVM_USE_LINKER=lld

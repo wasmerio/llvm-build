@@ -41,7 +41,7 @@ jobs:
     # Configure LLVM
     - template: /azure-pipelines/cmake-configure-step-template.yml
       parameters:
-        cmakeArgs: >
+        cmakeArgs:
           -G Ninja
           -DCMAKE_C_COMPILER=clang
           -DCMAKE_CXX_COMPILER=clang++

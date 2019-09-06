@@ -25,7 +25,7 @@ jobs:
     # Configure LLVM
     - template: /azure-pipelines/cmake-configure-step-template.yml
       parameters:
-        cmakeArgs: >
+        cmakeArgs:
           -G "Visual Studio 16 2019" -A ${{parameters.platform}}
           $(configArgs)
 

@@ -7,7 +7,7 @@ steps:
     displayName: Configure LLVM
     inputs:
       workingDirectory: $(Build.ArtifactStagingDirectory)/llvm
-      cmakeArgs: >
+      cmakeArgs:
         $(Build.SourcesDirectory)/llvm-project/llvm/
         -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm
         -DLLVM_TARGETS_TO_BUILD="X86;AArch64"
