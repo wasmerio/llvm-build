@@ -12,15 +12,32 @@ jobs:
         Release:
           configName: Release
           buildConfig: Release
+          installClang: false
           configArgs: ''
         Debug:
           configName: Debug
           buildConfig: Debug
+          installClang: false
           configArgs: ''
+        ClangLTO:
+          configName: ClangLTO
+          buildConfig: Release
+          installClang: true
+          configArgs:
+            -T LLVM
+            -DLLVM_ENABLE_LTO=Thin
 
     steps:
     - checkout: self
       submodules: recursive
+
+    # Install Clang 9 for configurations that need it.
+    - script: |
+        wget http://prereleases.llvm.org/9.0.0/rc3/LLVM-9.0.0-rc3-win64.exe
+        start /wait LLVM-9.0.0-rc3-win64.exe /S
+      displayName: Download Clang 9
+      workingDirectory: $(Pipeline.Workspace)
+      condition: eq(variables['installClang'], 'true')
 
     # Configure LLVM
     - template: /azure-pipelines/cmake-configure-step-template.yml
