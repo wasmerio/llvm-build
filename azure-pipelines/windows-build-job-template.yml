@@ -33,9 +33,9 @@ jobs:
 
     # Install Clang 9 for configurations that need it.
     - script: |
-        wget http://prereleases.llvm.org/9.0.0/rc3/LLVM-9.0.0-rc3-win64.exe
-        start /wait LLVM-9.0.0-rc3-win64.exe /S
-      displayName: Download Clang 9
+        curl -L -o installLLVM.exe http://prereleases.llvm.org/9.0.0/rc3/LLVM-9.0.0-rc3-win64.exe || exit 1
+        start /wait installLLVM.exe /S
+      displayName: Install Clang 9
       workingDirectory: $(Pipeline.Workspace)
       condition: eq(variables['installClang'], 'true')
 
