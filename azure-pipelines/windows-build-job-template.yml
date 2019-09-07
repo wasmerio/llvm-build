@@ -35,10 +35,16 @@ jobs:
     - script: |
         curl -L -o installLLVM.exe http://prereleases.llvm.org/9.0.0/rc3/LLVM-9.0.0-rc3-win64.exe || exit 1
         start /wait installLLVM.exe /S || exit 1
-        setx /M PATH "C:\Program Files\LLVM\bin;%PATH%"
       displayName: Install Clang 9
       workingDirectory: $(Pipeline.Workspace)
       condition: eq(variables['installClang'], 'true')
+
+    - powershell: |
+      [Environment]::SetEnvironmentVariable(
+        "Path",
+        [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine)
+          + ";C:\Program Files\LLVM\bin",
+        [EnvironmentVariableTarget]::Machine)
 
     # Configure LLVM
     - template: /azure-pipelines/cmake-configure-step-template.yml
