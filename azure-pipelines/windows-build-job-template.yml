@@ -40,11 +40,10 @@ jobs:
       condition: eq(variables['installClang'], 'true')
 
     - powershell: |
-        [Environment]::SetEnvironmentVariable(
-          "Path",
-          [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine)
-            + ";C:\Program Files\LLVM\bin",
-          [EnvironmentVariableTarget]::Machine)
+        $OldPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+        [System.Environment]::SetEnvironmentVariable("Path", $OldPath + ";C:\Program Files\LLVM\bin", [System.EnvironmentVariableTarget]::Machine)
+      displayName: Set Clang PATH
+      condition: eq(variables['installClang'], 'true')
 
     # Configure LLVM
     - template: /azure-pipelines/cmake-configure-step-template.yml
