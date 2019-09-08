@@ -36,8 +36,7 @@ jobs:
         echo on
         curl -L -o installLLVM.exe http://prereleases.llvm.org/9.0.0/rc3/LLVM-9.0.0-rc3-win64.exe || exit 1
         start /wait installLLVM.exe /S || exit 1
-        dir C:\Program Files\LLVM
-        dir C:\Program Files (x86)\LLVM
+        dir "C:\Program Files\LLVM"
       displayName: Install Clang 9
       workingDirectory: $(Pipeline.Workspace)
       condition: and(succeeded(), eq(variables['installClang'], 'true'))
