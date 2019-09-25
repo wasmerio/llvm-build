@@ -34,7 +34,7 @@ jobs:
     # Install Clang 9 for configurations that need it.
     - script: |
         echo on
-        curl -L -o installLLVM.exe http://prereleases.llvm.org/9.0.0/rc3/LLVM-9.0.0-rc3-win64.exe || exit 1
+        curl -L -o installLLVM.exe http://releases.llvm.org/9.0.0/LLVM-9.0.0-win64.exe || exit 1
         start /wait installLLVM.exe /S || exit 1
         dir "C:\Program Files\LLVM"
       displayName: Install Clang 9
