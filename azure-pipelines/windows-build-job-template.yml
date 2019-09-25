@@ -19,13 +19,13 @@ jobs:
           buildConfig: Debug
           installClang: false
           configArgs: ''
-        ClangLTO:
-          configName: ClangLTO
-          buildConfig: Release
-          installClang: true
-          configArgs:
-            -T LLVM
-            -DLLVM_ENABLE_LTO=Thin
+        #ClangLTO:
+        #  configName: ClangLTO
+        #  buildConfig: Release
+        #  installClang: true
+        #  configArgs:
+        #    -T LLVM
+        #    -DLLVM_ENABLE_LTO=Thin
 
     steps:
     - checkout: self
