@@ -2,6 +2,17 @@ stages:
   - stage:
     displayName: Build
     jobs:
+      # Ubuntu 19.10
+      - template: /azure-pipelines/posix-build-job-template.yml
+        parameters:
+          baseName: 'Ubuntu1910'
+          vmImage: 'ubuntu-16.04'
+          cmakeArgs:
+            -DCMAKE_RANLIB=/usr/local/bin/llvm-ranlib
+            -DCMAKE_AR=/usr/local/bin/llvm-ar
+            -DLLVM_USE_LINKER=lld
+          container: 'wavm/ubuntu19.10-builder:latest'
+
       # Ubuntu 16.04
       - template: /azure-pipelines/posix-build-job-template.yml
         parameters:
