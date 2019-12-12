@@ -81,8 +81,8 @@ stages:
         - bash: |
             # Just fetch the release URL instead of querying the API, since API requests from the
             # Azure Pipelines agents are often rate limited by GitHub.
-            #if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://api.github.com/repos/WAVM/WAVM-LLVM/releases/tag/$(Build.SourceBranchName)) = 200 ]]
-            if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://github.com/WAVM/WAVM-LLVM/releases/tag/$(Build.SourceBranchName)) = 200 ]]
+            #if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://api.github.com/repos/wasmer/llvm-build/releases/tag/$(Build.SourceBranchName)) = 200 ]]
+            if [[ $(curl --write-out %{http_code} --silent --output /dev/null https://github.com/wasmer/llvm-build/releases/tag/$(Build.SourceBranchName)) = 200 ]]
             then
               echo "##vso[task.setvariable variable=deleteOldRelease]true"
               echo "Found old release with the build's date"
@@ -97,7 +97,7 @@ stages:
           condition: and(succeeded(), eq(variables.deleteOldRelease, 'true'))
           displayName: Delete old GitHub release
           inputs:
-            gitHubConnection: GitHub-WAVM-AzurePipelines
+            gitHubConnection: wasmer
             action: 'delete'
             tag: $(Build.SourceBranchName)
 
@@ -111,7 +111,7 @@ stages:
         - task: GitHubRelease@0
           displayName: Create GitHub release
           inputs:
-            gitHubConnection: GitHub-WAVM-AzurePipelines
+            gitHubConnection: wasmer
             action: create
             target: $(Build.SourceVersion)
             tagSource: manual
