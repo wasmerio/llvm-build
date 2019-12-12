@@ -111,7 +111,7 @@ stages:
         - task: GitHubRelease@0
           displayName: Create GitHub release
           inputs:
-            gitHubConnection: wasmer
+            gitHubConnection: wasmerio
             action: create
             target: $(Build.SourceVersion)
             tagSource: manual
