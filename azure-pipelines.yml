@@ -97,7 +97,7 @@ stages:
           condition: and(succeeded(), eq(variables.deleteOldRelease, 'true'))
           displayName: Delete old GitHub release
           inputs:
-            gitHubConnection: wasmer
+            gitHubConnection: wasmerio
             action: 'delete'
             tag: $(Build.SourceBranchName)
 
