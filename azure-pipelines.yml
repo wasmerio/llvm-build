@@ -97,7 +97,7 @@ stages:
           condition: and(succeeded(), eq(variables.deleteOldRelease, 'true'))
           displayName: Delete old GitHub release
           inputs:
-            gitHubConnection: wasmerio
+            gitHubConnection: syrusakbary
             action: 'delete'
             tag: $(Build.SourceBranchName)
 
@@ -111,7 +111,7 @@ stages:
         - task: GitHubRelease@0
           displayName: Create GitHub release
           inputs:
-            gitHubConnection: wasmerio
+            gitHubConnection: syrusakbary
             action: create
             target: $(Build.SourceVersion)
             tagSource: manual
