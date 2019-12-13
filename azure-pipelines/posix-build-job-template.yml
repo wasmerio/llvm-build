@@ -15,9 +15,9 @@ jobs:
 
     strategy:
       matrix:
-        LTO: 
-          configName: LTO
-          cmakeArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_LTO=Thin
+        #LTO: 
+        #  configName: LTO
+        #  cmakeArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_LTO=Thin
         Release:
           configName: Release
           cmakeArgs: -DCMAKE_BUILD_TYPE=Release
