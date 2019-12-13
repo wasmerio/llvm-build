@@ -24,13 +24,13 @@ jobs:
         Checked:
           configName: Checked
           cmakeArgs: -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON
-        Sanitized:
-          configName: Sanitized
-          cmakeArgs: >
-            -DCMAKE_BUILD_TYPE=Release
-            -DLLVM_ENABLE_ASSERTIONS=ON
-            -DLLVM_USE_SANITIZE_COVERAGE=ON
-            -DLLVM_USE_SANITIZER="Address;Undefined"
+        #Sanitized:
+        #  configName: Sanitized
+        #  cmakeArgs: >
+        #    -DCMAKE_BUILD_TYPE=Release
+        #    -DLLVM_ENABLE_ASSERTIONS=ON
+        #    -DLLVM_USE_SANITIZE_COVERAGE=ON
+        #    -DLLVM_USE_SANITIZER="Address;Undefined"
 
     steps:
     - checkout: self

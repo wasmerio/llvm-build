@@ -14,11 +14,11 @@ jobs:
           buildConfig: Release
           installClang: false
           configArgs: ''
-        Debug:
-          configName: Debug
-          buildConfig: Debug
-          installClang: false
-          configArgs: ''
+        #Debug:
+        #  configName: Debug
+        #  buildConfig: Debug
+        #  installClang: false
+        #  configArgs: ''
         #ClangLTO:
         #  configName: ClangLTO
         #  buildConfig: Release
