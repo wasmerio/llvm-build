@@ -25,17 +25,17 @@ stages:
             -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
           container: 'wavm/ubuntu16.04-builder:latest'
 
-      # CentOS 7.0
-      - template: /azure-pipelines/posix-build-job-template.yml
-        parameters:
-          baseName: 'Centos70'
-          vmImage: 'ubuntu-16.04'
-          cmakeArgs:
-            -DCMAKE_RANLIB=/usr/local/bin/llvm-ranlib
-            -DCMAKE_AR=/usr/local/bin/llvm-ar
-            -DLLVM_USE_LINKER=lld
-            -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
-          container: 'wavm/centos7.0-builder:latest'
+      # # CentOS 7.0
+      # - template: /azure-pipelines/posix-build-job-template.yml
+      #   parameters:
+      #     baseName: 'Centos70'
+      #     vmImage: 'ubuntu-16.04'
+      #     cmakeArgs:
+      #       -DCMAKE_RANLIB=/usr/local/bin/llvm-ranlib
+      #       -DCMAKE_AR=/usr/local/bin/llvm-ar
+      #       -DLLVM_USE_LINKER=lld
+      #       -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
+      #     container: 'wavm/centos7.0-builder:latest'
 
       # Win32
       - template: /azure-pipelines/windows-build-job-template.yml
