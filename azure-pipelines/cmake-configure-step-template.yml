@@ -10,7 +10,6 @@ steps:
       cmakeArgs:
         $(Build.SourcesDirectory)/llvm-project/llvm/
         -DCMAKE_INSTALL_PREFIX=$(Build.ArtifactStagingDirectory)/install/llvm
-        -DLLVM_ENABLE_PROJECTS="clang"
         -DLLVM_TARGETS_TO_BUILD="X86;AArch64"
         -DLLVM_INCLUDE_DOCS=OFF
         -DLLVM_INCLUDE_EXAMPLES=OFF
