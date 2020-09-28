@@ -8,10 +8,11 @@ steps:
     displayName: Archive LLVM install
     inputs:
       rootFolderOrFile: ${{parameters.installPath}}
-      includeRootFolder: false
-      archiveType: zip
-      archiveFile: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}.zip
+      # includeRootFolder: false
+      archiveType: tar
+      tarCompression: xz
+      archiveFile: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}.tar.xz
 
   # Publish the LLVM install archive as an artifact
-  - publish: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}.zip
+  - publish: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}.tar.xz
     artifact: ${{parameters.artifactName}}
