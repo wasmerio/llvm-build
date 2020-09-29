@@ -37,17 +37,17 @@ stages:
       #       -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
       #     container: 'wavm/centos7.0-builder:latest'
 
-      # Win32
-      - template: /azure-pipelines/windows-build-job-template.yml
-        parameters:
-          baseName: 'Win32'
-          platform: 'Win32'
+      # # Win32
+      # - template: /azure-pipelines/windows-build-job-template.yml
+      #   parameters:
+      #     baseName: 'Win32'
+      #     platform: 'Win32'
 
-      # Win64
-      - template: /azure-pipelines/windows-build-job-template.yml
-        parameters:
-          baseName: 'Win64'
-          platform: 'x64'
+      # # Win64
+      # - template: /azure-pipelines/windows-build-job-template.yml
+      #   parameters:
+      #     baseName: 'Win64'
+      #     platform: 'x64'
 
       # MacOS 10.14
       - template: /azure-pipelines/posix-build-job-template.yml
