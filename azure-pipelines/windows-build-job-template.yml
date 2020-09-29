@@ -4,7 +4,7 @@ parameters:
 
 jobs:
   - job: ${{parameters.baseName}}
-    pool: { vmImage: 'windows-2019' }
+    pool: { vmImage: 'vs2017-win2016' }
     timeoutInMinutes: 120
 
     strategy:
