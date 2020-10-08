@@ -117,7 +117,7 @@ stages:
             tagSource: manual
             tag: $(Build.SourceBranchName)
             title: $(Build.SourceBranchName)
-            assets: $(Build.ArtifactStagingDirectory)/**/*.zip
+            assets: $(Build.ArtifactStagingDirectory)/**/*.tar.xz
             releaseNotesSource: input
             releaseNotes:
             addChangeLog: false
